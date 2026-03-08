@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dia de la Mujer - 08 de Marzo</title>
+<style>
+  :root{
+    --bg1:#1b1132; --bg2:#0f0e17; --bg3:#2a1f4f;
+    --txt:#fff;
+    --card:#ffffffee; --card-txt:#2a2a2a;
+    --ring:#ff6b8a;
+    --shadow: 0 12px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--txt);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    overflow:hidden;
+    background: radial-gradient(1400px 900px at 80% -10%, var(--bg3), var(--bg2) 40%) fixed;
+    animation: fondo 14s ease-in-out infinite;
+  }
+  @keyframes fondo{
+    0%,100%{ background: radial-gradient(1400px 900px at 80% -10%, var(--bg3), var(--bg2) 40%) }
+    50%{ background: radial-gradient(1200px 800px at 20% 110%, var(--bg1), var(--bg2) 45%) }
+  }
+
+  .stage{
+    position:relative; width:100%; height:100%;
+    overflow:hidden; cursor: pointer;
+  }
+
+  .header{
+    position:absolute; left:50%; top:16px; transform:translateX(-50%);
+    width:min(960px, 92vw);
+    text-align:center;
+    padding:10px 14px;
+    border-radius:18px;
+    background: linear-gradient( to right, rgba(255,109,141,.16), rgba(255,218,185,.07) );
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 18px rgba(255,105,155,.08);
+  }
+  .header h1{ margin:0; font-size:clamp(18px,4.6vmin,38px) }
+  .header p{ margin:6px 0 0 0; opacity:.9; font-size:clamp(12px,2.6vmin,16px) }
+
+  .hint{
+    position:absolute; inset:0; display:grid; place-items:center;
+    text-align:center; pointer-events:none; color:#ececec;
+    transition: opacity .35s ease; opacity:.95;
+  }
+  .hint.hide{ opacity:0 }
+
+  /* Contador */
+  .counter{
+    position:fixed; left:12px; bottom:12px;
+    background: #ffffff1a; border:1px solid #ffffff25;
+    padding:8px 12px; border-radius:12px; backdrop-filter: blur(6px);
+    font-weight:700; box-shadow: 0 8px 20px rgba(0,0,0,.2);
+  }
+
+  /* Botones */
+  .controls{
+    position:fixed; right:10px; bottom:10px; display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .btn{
+    border:none; color:#fff; font-weight:700; border-radius:999px;
+    padding:8px 12px; cursor:pointer;
+    background: linear-gradient(90deg, #ff6b8a, #ff4d6d);
+    box-shadow: 0 10px 24px rgba(255,77,109,.35);
+  }
+  .btn.alt{
+    background: linear-gradient(90deg, #ffd166, #ff9f1c); color:#3a2b2b;
+  }
+
+  /* Flor emergente (envoltorio) */
+  .bloom{
+    position:absolute; left:0; top:0;
+    transform: translate(-50%, -50%);
+    pointer-events:none; will-change: transform, opacity;
+    animation: elevar 2600ms ease-out forwards;
+    filter: drop-shadow(0 14px 28px rgba(0,0,0,.35));
+  }
+  @keyframes elevar{
+    0%{ transform: translate(-50%, -50%) scale(.6) rotate(var(--rot)); opacity:0 }
+    15%{ opacity:1 }
+    60%{ transform: translate(-50%, calc(-50% - 40px)) scale(1.07) rotate(calc(var(--rot) + 10deg)) }
+    100%{ transform: translate(-50%, calc(-50% - 80px)) scale(1) rotate(calc(var(--rot) + 20deg)); opacity:0 }
+  }
+
+  /* Onda circular (ripple) */
+  .ripple{
+    position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);
+    width:10px; height:10px; border-radius:50%;
+    border: 2px solid var(--ring);
+    opacity:.8; filter: drop-shadow(0 6px 14px rgba(255,77,109,.35));
+    animation: onda 900ms ease-out forwards;
+  }
+  @keyframes onda{
+    from{ transform: translate(-50%, -50%) scale(.2); opacity:.9 }
+    to{ transform: translate(-50%, -50%) scale(8); opacity:0 }
+  }
+
+  /* SVG flor */
+  .flower{ display:block; width:var(--size); height:var(--size); }
+  .flower .core{ animation: latido 1600ms ease-in-out infinite }
+  @keyframes latido{
+    0%,100%{ transform: scale(1) }
+    40%{ transform: scale(1.08) }
+  }
+
+  /* Mensaje burbuja */
+  .bubble{
+    position:absolute; left:50%; top:calc(50% - 58px);
+    transform: translate(-50%, -100%);
+    background: var(--card); color:var(--card-txt);
+    padding:8px 12px; border-radius:14px; font-weight:700; white-space:nowrap;
+    box-shadow: var(--shadow); opacity:0;
+    animation: pop 820ms ease-out forwards;
+  }
+  .bubble::after{
+    content:""; position:absolute; left:50%; bottom:-8px; transform:translateX(-50%);
+    width:14px; height:14px; background:var(--card);
+    clip-path: polygon(50% 100%, 0 0, 100% 0);
+  }
+  @keyframes pop{
+    0%{ transform: translate(-50%, -100%) scale(.85); opacity:0 }
+    60%{ transform: translate(-50%, -120%) scale(1.05); opacity:1 }
+    100%{ transform: translate(-50%, -110%) scale(1); opacity:1 }
+  }
+
+  /* Pétalos (partículas) */
+  .petalo{
+    position:absolute; width:12px; height:18px; border-radius: 12px 12px 12px 2px;
+    transform-origin: 50% 100%;
+    background: radial-gradient(circle at 30% 30%, var(--hi), var(--petal) 70%);
+    opacity:.95; filter: drop-shadow(0 6px 8px rgba(0,0,0,.25));
+    animation: deriva var(--dur) linear forwards;
+  }
+  @keyframes deriva{
+    to { transform: translate(var(--dx), var(--dy)) rotate(var(--rdeg)); opacity:0 }
+  }
+
+  /* Lluvia de pétalos (modo desfile) */
+  .fall{
+    position:fixed; top:-20px; will-change: transform, opacity;
+    width:14px; height:20px; border-radius: 14px 14px 14px 2px;
+    background: radial-gradient(circle at 30% 30%, var(--hi), var(--petal) 70%);
+    opacity:.9; filter: drop-shadow(0 8px 10px rgba(0,0,0,.25));
+    animation: caer var(--t) linear forwards, balanceo 2600ms ease-in-out infinite;
+  }
+  @keyframes caer{
+    to { transform: translate3d(var(--sx), 105vh, 0) rotate(var(--rot)); opacity:.95 }
+  }
+  @keyframes balanceo{
+    0%,100%{ margin-left:0 } 50%{ margin-left:10px }
+  }
+      /* Corazones que suben */
+.hearts-layer{
+  position:fixed; inset:0; pointer-events:none; overflow:hidden;
+  z-index:0; /* detrás del escenario */
+}
+.heart{
+  position:absolute;
+  left:0; bottom:-40px; /* inicia debajo del viewport */
+  width:var(--sz); height:var(--sz);
+  transform: translateX(var(--tx)) translateY(0) scale(var(--scale)) rotate(var(--rot));
+  opacity:0;
+  animation: moveUp var(--t) linear forwards;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
+}
+@keyframes moveUp{
+  0%   { transform: translateX(var(--tx)) translateY(0)        scale(var(--scale)) rotate(var(--rot)); opacity:0 }
+  10%  { opacity:.95 }
+  90%  { opacity:.95 }
+  100% { transform: translateX(var(--tx)) translateY(-120vh)   scale(var(--scale)) rotate(calc(var(--rot) + 15deg)); opacity:0 }
+}
+/* Asegura que el escenario quede por encima de los corazones */
+.stage{ z-index:1; position:relative; }
+</style>
+</head>
+<body>
+    
+<!-- Capa de corazones (fondo) -->
+<div class="hearts-layer" id="heartsLayer" aria-hidden="true"></div>
+
+  <div class="stage" id="stage" aria-label="Toque o haga clic para crear flores con mensajes">
+    <div class="header">
+      <h1>💜 FELIZ DIA DE LA MUJER 💜</h1>
+      <p>Mujer guerrera y valiente </p>
+    </div>
+    <div class="hint" id="hint">
+      <div>
+        <div style="font-size:clamp(26px,7.6vmin,56px)">🌺 Toca para sembrar una flor</div>
+        <div style="margin-top:8px;opacity:.9;font-size:clamp(13px,3vmin,18px)">
+          ¡Cada toque trae un mensaje distinto! ✨
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="counter" id="counter">Flores: 0</div>
+
+  <div class="controls">
+    <button class="btn" id="modoBtn" title="Activa una lluvia continua de pétalos">🌸 Modo desfile</button>
+    <button class="btn alt" id="fijarBtn" title="Fijar un mensaje personalizado">Fijar mensaje</button>
+  </div>
+
+<script>
+  // === Configuración ===
+  const MENSAJES = [
+    "Tu fuerza abre caminos 💜",
+    "Igualdad real, todos los días ✊",
+    "Gracias por transformar el mundo 🌍",
+    "Mereces respeto, oportunidades y alegría 🌟",
+    "Tu talento cambia historias 📖",
+    "Que tus metas florezcan siempre 🌸",
+    "Hoy celebramos tu voz y tu luz ✨",
+    "Derechos, no favores 💪",
+    "Eres inspiración constante 🫶",
+    "Que nunca falte el reconocimiento que mereces 💐",
+    "04/02 - 08/03  - 💜09/03💜 💐",
+    "Nunca estas ni estaras sola💐",
+    "no importa donde te encuentres, siempre brillaras muy fuerte 💐"
+  ];
+
+  const PALETAS = [
+    { petal:"#ff6b9e", hi:"#ffd2e3", core:"#ffd166" }, // rosa
+    { petal:"#b26ff3", hi:"#ead6ff", core:"#ffe28a" }, // lila
+    { petal:"#ff9f1c", hi:"#ffe4b3", core:"#ffd166" }, // ámbar
+    { petal:"#5dd39e", hi:"#c9f7e7", core:"#ffe28a" }, // menta
+    { petal:"#f25477", hi:"#ffc9d7", core:"#ffe28a" }, // frambuesa
+  ];
+
+  let mensajeFijo = "";          // Si se establece, se usará siempre este
+  let floresSembradas = 0;       // Contador
+  let lluviaActiva = false;      // Estado del modo desfile
+  let lluviaTimer = null;
+
+  const stage = document.getElementById('stage');
+  const hint = document.getElementById('hint');
+  const counter = document.getElementById('counter');
+  const modoBtn = document.getElementById('modoBtn');
+  const fijarBtn = document.getElementById('fijarBtn');
+
+  const rnd = (a,b)=> Math.random()*(b-a)+a;
+  const pick = arr => arr[(Math.random()*arr.length)|0];
+
+  // Interacción principal
+  stage.addEventListener('pointerdown', (ev)=>{
+    hint?.classList.add('hide');
+    const rect = stage.getBoundingClientRect();
+    const x = ev.clientX - rect.left;
+    const y = ev.clientY - rect.top;
+    crearFlor(x, y);
+  });
+
+  // Accesibilidad con teclado
+  stage.setAttribute('tabindex', '0');
+  stage.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      const r = stage.getBoundingClientRect();
+      crearFlor(r.width/2, r.height/2);
+    }
+  });
+
+  // Fijar texto
+  fijarBtn.addEventListener('click', ()=>{
+    const actual = mensajeFijo ? `Actualmente fijo:\n"${mensajeFijo}"\n\n` : "";
+    const nuevo = prompt(actual + "Escribe el mensaje que quieres fijar (deja vacío para volver a aleatorio):");
+    if(nuevo === null) return;
+    mensajeFijo = (nuevo || "").trim();
+    fijarBtn.textContent = mensajeFijo ? "Mensaje fijo ✅" : "Fijar mensaje";
+  });
+
+  // Modo desfile (lluvia de pétalos)
+  modoBtn.addEventListener('click', ()=>{
+    if(lluviaActiva){ detenerLluvia(); }
+    else{ iniciarLluvia(); }
+  });
+
+  function iniciarLluvia(){
+    lluviaActiva = true;
+    modoBtn.textContent = "Detener desfile ✋";
+    lluviaTimer = setInterval(()=>{
+      crearPetaloCaida();
+    }, 200); // cada 200ms un pétalo
+  }
+  function detenerLluvia(){
+    lluviaActiva = false;
+    modoBtn.textContent = "🌸 Modo desfile";
+    clearInterval(lluviaTimer);
+  }
+
+  // Crear flor completa en (x, y)
+  function crearFlor(x, y){
+    const pal = pick(PALETAS);
+    const size = Math.round(rnd(70, 120));
+    const rot = `${rnd(-16, 16).toFixed(1)}deg`;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'bloom';
+    wrap.style.left = x + 'px';
+    wrap.style.top = y + 'px';
+    wrap.style.setProperty('--rot', rot);
+    wrap.style.setProperty('--size', size + 'px');
+
+    // Onda
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple';
+    wrap.appendChild(ripple);
+
+    // SVG flor
+    const svg = svgFlor(size, pal);
+    svg.classList.add('flower');
+    wrap.appendChild(svg);
+
+    // Burbuja con mensaje
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = mensajeFijo || pick(MENSAJES);
+    wrap.appendChild(bubble);
+
+    stage.appendChild(wrap);
+
+    // Partículas de pétalos locales
+    const cuantos = Math.round(rnd(6, 10));
+    for(let i=0;i<cuantos;i++){
+      crearPetalo(x, y, pal);
+    }
+
+    // Contador
+    floresSembradas++;
+    counter.textContent = `Flores: ${floresSembradas}`;
+
+    // Limpieza
+    setTimeout(()=> wrap.remove(), 2800);
+  }
+
+  // Partícula de pétalo (explosión local)
+  function crearPetalo(x, y, pal){
+    const p = document.createElement('div');
+    p.className = 'petalo';
+    p.style.left = x + 'px';
+    p.style.top  = y + 'px';
+    p.style.setProperty('--petal', pal.petal);
+    p.style.setProperty('--hi', pal.hi);
+
+    const dx = rnd(-90, 90).toFixed(1) + 'px';
+    const dy = rnd(-140, -70).toFixed(1) + 'px';
+    const rdeg = rnd(-180, 180).toFixed(1) + 'deg';
+    const dur = Math.round(rnd(1200, 2000)) + 'ms';
+
+    p.style.setProperty('--dx', dx);
+    p.style.setProperty('--dy', dy);
+    p.style.setProperty('--rdeg', rdeg);
+    p.style.setProperty('--dur', dur);
+    p.style.transform = `translate(-50%, -50%) rotate(${rnd(-20,20).toFixed(1)}deg)`;
+
+    stage.appendChild(p);
+    setTimeout(()=> p.remove(), parseInt(dur) + 200);
+  }
+
+  // Pétalo de la lluvia continua
+  function crearPetaloCaida(){
+    const pal = pick(PALETAS);
+    const p = document.createElement('div');
+    p.className = 'fall';
+    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const x = rnd(0, vw);
+    p.style.left = x + 'px';
+    p.style.setProperty('--petal', pal.petal);
+    p.style.setProperty('--hi', pal.hi);
+
+    // Trayectoria y tiempo
+    const sx = (rnd(-80, 80)).toFixed(1) + 'px';
+    const rot = (rnd(-220, 220)).toFixed(1) + 'deg';
+    const t = Math.round(rnd(6000, 11000)) + 'ms';
+
+    p.style.setProperty('--sx', sx);
+    p.style.setProperty('--rot', rot);
+    p.style.setProperty('--t', t);
+
+    document.body.appendChild(p);
+    setTimeout(()=> p.remove(), parseInt(t) + 300);
+  }
+
+  // Genera un SVG de flor con 8 pétalos curvos
+  function svgFlor(size, pal){
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '-50 -50 100 100');
+    svg.setAttribute('width', size);
+    svg.setAttribute('height', size);
+
+    const defs = document.createElementNS(ns, 'defs');
+    const gid = 'g' + Math.random().toString(36).slice(2,8);
+    const rg = document.createElementNS(ns, 'radialGradient');
+    rg.setAttribute('id', gid);
+    rg.setAttribute('cx','30%'); rg.setAttribute('cy','30%'); rg.setAttribute('r','70%');
+    const s1 = document.createElementNS(ns, 'stop'); s1.setAttribute('offset','0%'); s1.setAttribute('stop-color', pal.hi);
+    const s2 = document.createElementNS(ns, 'stop'); s2.setAttribute('offset','100%'); s2.setAttribute('stop-color', pal.petal);
+    rg.appendChild(s1); rg.appendChild(s2); defs.appendChild(rg); svg.appendChild(defs);
+
+    // 8 pétalos con curva (path)
+    const petalPath = "M0,-26 C10,-24 12,-4 0,0 C-12,-4 -10,-24 0,-26 Z";
+    for(let i=0;i<8;i++){
+      const g = document.createElementNS(ns, 'g');
+      g.setAttribute('transform', `rotate(${i*45})`);
+      const p = document.createElementNS(ns, 'path');
+      p.setAttribute('d', petalPath);
+      p.setAttribute('fill', `url(#${gid})`);
+      p.setAttribute('opacity','0.98');
+      svg.appendChild(g); g.appendChild(p);
+    }
+
+    // Centro brillante
+    const core = document.createElementNS(ns, 'circle');
+    core.setAttribute('cx','0'); core.setAttribute('cy','0'); core.setAttribute('r','10');
+    core.setAttribute('fill', pal.core);
+    core.setAttribute('class', 'core');
+    core.setAttribute('stroke', '#00000020'); core.setAttribute('stroke-width','1');
+    svg.appendChild(core);
+
+    // Destello
+    const shine = document.createElementNS(ns, 'circle');
+    shine.setAttribute('cx','-3'); shine.setAttribute('cy','-3'); shine.setAttribute('r','3');
+    shine.setAttribute('fill','#ffffffcc');
+    svg.appendChild(shine);
+
+    return svg;
+  }
+  // ====== Corazones que suben (SVG) ======
+const heartsLayer = document.getElementById('heartsLayer');
+
+// Configuración (ajusta a gusto):
+const HEART_INTERVAL_MS = 600;   // cada cuánto crear un corazón de fondo
+const HEART_MIN_SIZE   = 16;     // px
+const HEART_MAX_SIZE   = 34;     // px
+const HEART_MIN_TIME   = 7000;   // ms (tiempo de subida)
+const HEART_MAX_TIME   = 13000;  // ms
+
+function createHeartSVG(size){
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 100 100');
+  svg.setAttribute('width', size);
+  svg.setAttribute('height', size);
+
+  const gradId = 'hg' + Math.random().toString(36).slice(2,8);
+  const defs = document.createElementNS(ns, 'defs');
+  const lg = document.createElementNS(ns, 'linearGradient');
+  lg.setAttribute('id', gradId);
+  lg.setAttribute('x1','0%'); lg.setAttribute('y1','0%');
+  lg.setAttribute('x2','100%'); lg.setAttribute('y2','100%');
+
+  const stop1 = document.createElementNS(ns, 'stop');
+  stop1.setAttribute('offset','0%');
+  stop1.setAttribute('stop-color','#ff6b8a');
+  const stop2 = document.createElementNS(ns, 'stop');
+  stop2.setAttribute('offset','100%');
+  stop2.setAttribute('stop-color','#ff4d6d');
+
+  lg.appendChild(stop1); lg.appendChild(stop2);
+  defs.appendChild(lg);
+  svg.appendChild(defs);
+
+  const path = document.createElementNS(ns, 'path');
+  // Corazón normalizado (0..100)
+  path.setAttribute('d','M50 15 C 35 -5, 0 0, 0 30 C 0 60, 25 78, 50 95 C 75 78, 100 60, 100 30 C 100 0, 65 -5, 50 15 Z');
+  path.setAttribute('fill', `url(#${gradId})`);
+  svg.appendChild(path);
+
+  return svg;
+}
+
+function spawnHeart(){
+  const h = document.createElement('div');
+  h.className = 'heart';
+
+  const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  const left = Math.random() * vw;
+  const size = Math.random() * (HEART_MAX_SIZE - HEART_MIN_SIZE) + HEART_MIN_SIZE;
+  const dur  = Math.round(Math.random() * (HEART_MAX_TIME - HEART_MIN_TIME) + HEART_MIN_TIME);
+  const rot  = (Math.random()*24 - 12).toFixed(1) + 'deg';
+  const scale = (Math.random()*0.35 + 0.85).toFixed(2);
+  const driftX = (Math.random()*80 - 40).toFixed(1) + 'px';
+
+  h.style.left = left + 'px';
+  h.style.setProperty('--sz',   size + 'px');
+  h.style.setProperty('--t',    dur + 'ms');
+  h.style.setProperty('--rot',  rot);
+  h.style.setProperty('--scale',scale);
+  h.style.setProperty('--tx',   driftX);
+
+  // SVG adentro
+  h.appendChild(createHeartSVG(size));
+
+  heartsLayer.appendChild(h);
+  setTimeout(()=> h.remove(), dur + 800);
+}
+
+// Rastro en cada toque/clic
+function spawnHeartTrail(x, y){
+  const n = 6;
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const h = document.createElement('div');
+      h.className = 'heart';
+
+      const size  = Math.random() * (24 - 12) + 12;
+      const dur   = Math.round(Math.random() * (3600 - 2200) + 2200);
+      const rot   = (Math.random()*36 - 18).toFixed(1) + 'deg';
+      const scale = (Math.random()*0.3 + 0.7).toFixed(2);
+      const jitterX = Math.random()*80 - 40;
+      const driftX  = (Math.random()*40 - 20).toFixed(1) + 'px';
+
+      const leftAbs = (x + jitterX);
+      // bottom relativo a la posición del toque (sube desde un poco más abajo)
+      const bottomFromTouch = Math.max(-40, - (window.innerHeight - y) + 10);
+
+      h.style.left = leftAbs + 'px';
+      h.style.bottom = bottomFromTouch + 'px';
+      h.style.setProperty('--sz',   size + 'px');
+      h.style.setProperty('--t',    dur + 'ms');
+      h.style.setProperty('--rot',  rot);
+      h.style.setProperty('--scale',scale);
+      h.style.setProperty('--tx',   driftX);
+
+      h.appendChild(createHeartSVG(size));
+      heartsLayer.appendChild(h);
+      setTimeout(()=> h.remove(), dur + 600);
+    }, i * 80);
+  }
+}
+
+// Arranque automático de corazones de fondo
+let heartTimer = setInterval(spawnHeart, HEART_INTERVAL_MS);
+
+// Engancha el rastro de corazones a tu interacción actual
+stage.addEventListener('pointerdown', (ev)=>{
+  const rect = stage.getBoundingClientRect();
+  spawnHeartTrail(ev.clientX - rect.left, ev.clientY - rect.top);
+});
+stage.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' || e.key === ' '){
+    const r = stage.getBoundingClientRect();
+    spawnHeartTrail(r.width/2, r.height/2);
+  }
+});
+
+
+// ===== Música de fondo (autoplay + fallback) =====
+const bgm = document.getElementById('bgm');
+bgm.volume = 0.6;           // Volumen inicial (0.0 a 1.0)
+bgm.loop = true;            // Repetir en bucle (opcional)
+
+// Intento de autoplay al cargar
+async function tryPlayBgm(){
+  try{
+    const p = bgm.play();
+    if (p && typeof p.then === 'function') await p;
+  }catch(e){
+    // Si el navegador bloquea, se iniciará con el primer gesto del usuario
+    console.warn('Autoplay bloqueado. Se iniciará con el primer toque/clic.');
+  }
+}
+document.addEventListener('DOMContentLoaded', tryPlayBgm);
+
+// Fallback: primer toque/clic/tecla lo activa si quedó bloqueado
+let firstGestureDone = false;
+async function onFirstGesture(){
+  if(firstGestureDone) return;
+  firstGestureDone = true;
+  try { await bgm.play(); } catch(_){}
+}
+
+// Si ya tienes una referencia al contenedor principal, úsala.
+// Por ejemplo, si en tu HTML existe: <div id="stage">…</div>
+//const stageEl = document.getElementById('stage') || document.body;
+stageEl.addEventListener('pointerdown', onFirstGesture);
+stageEl.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' || e.key === ' ') onFirstGesture();
+});
+
+</script>
+<!-- Música de fondo: coloca 'canta8m.mp3' en la misma carpeta -->
+<audio id="bgm" src="ambiente.mp3" preload="auto" loop playsinline></audio>
+
+</body>
+</html>
